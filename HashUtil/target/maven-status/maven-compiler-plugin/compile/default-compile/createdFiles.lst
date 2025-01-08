@@ -1,0 +1,9 @@
+org\kaguya\Main.class
+org\kaguya\SimilarityResult$SimilarityGroup.class
+org\kaguya\ZipUtil.class
+org\kaguya\SimilarityChecker$SimHashValue.class
+org\kaguya\SimilarityResult$FileWithSimilarity.class
+org\kaguya\SimilarityChecker.class
+org\kaguya\FileUtil.class
+org\kaguya\Hash.class
+org\kaguya\SimilarityResult.class
