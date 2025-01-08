@@ -18,21 +18,6 @@
 - Java 17 或更高版本
 - Maven 3.6 或更高版本
 
-## 构建和运行
-
-1. 克隆项目：
-git clone ???
-
-2. 进入项目目录：
-cd HashUtil
-
-3. 使用Maven构建：
-mvn clean package
-
-4. 运行程序：
-mvn javafx:run
-
-
 ## 使用说明
 
 1. 选择文件夹：点击"选择文件夹"按钮选择要扫描的目录
