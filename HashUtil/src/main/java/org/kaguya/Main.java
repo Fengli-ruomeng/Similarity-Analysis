@@ -1,26 +1,26 @@
 package org.kaguya;
 
-import javafx.application.Application;
-import javafx.scene.Scene;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
-import javafx.scene.control.TextField;
-import javafx.scene.layout.HBox;
-import javafx.geometry.Insets;
-import javafx.scene.layout.VBox;
-import javafx.stage.DirectoryChooser;
-import javafx.stage.Stage;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.ScrollPane;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.Label;
-import javafx.scene.control.Slider;
-import javafx.scene.control.CheckBox;
-
 import java.io.File;
 import java.util.List;
 import java.util.Map;
 import java.util.function.BiFunction;
+
+import javafx.application.Application;
+import javafx.geometry.Insets;
+import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.control.Slider;
+import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
+import javafx.stage.DirectoryChooser;
+import javafx.stage.Stage;
 
 public class Main extends Application {
 
@@ -243,12 +243,27 @@ public class Main extends Application {
         showResultWindow("相似度对比结果", result, (key, group) -> {
             StringBuilder content = new StringBuilder();
             content.append("----------------------\n");
-            content.append("相似文件组：\n");
-            for (SimilarityResult.FileWithSimilarity file : group.getFiles()) {
-                content.append(String.format("%s (相似度: %.2f%%)\n", 
-                    file.getFileName(), 
-                    file.getSimilarity() * 100));
-            }
+            
+            // 找出基准文件（相似度为1.0的文件）
+            SimilarityResult.FileWithSimilarity baseFile = group.getFiles().stream()
+                .filter(f -> Math.abs(f.getSimilarity() - 1.0) < 0.0001) // 使用近似相等来处理浮点数
+                .findFirst()
+                .orElse(group.getFiles().get(0));
+
+            // 先输出基准文件
+            content.append("基准文件: ").append(baseFile.getFileName()).append("\n");
+            content.append("相似文件列表：\n");
+            
+            // 输出其他文件及其与基准文件的相似度，按相似度降序排序
+            group.getFiles().stream()
+                .filter(f -> !f.getFileName().equals(baseFile.getFileName()))
+                .sorted((f1, f2) -> Double.compare(f2.getSimilarity(), f1.getSimilarity()))
+                .forEach(file -> {
+                    content.append(String.format("- %s (与基准文件相似度: %.2f%%)\n", 
+                        file.getFileName(), 
+                        file.getSimilarity() * 100));
+                });
+            
             return content.toString();
         });
     }
