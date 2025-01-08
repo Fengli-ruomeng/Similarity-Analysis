@@ -104,7 +104,6 @@ public class FileUtil {
         return false;
     }
 
-    //输入一个List，然后根据这个List，通过MD5检查文件，将md5设为key，value设置为一个List，这个List里有所有都是这个md5的文件名。
     public Map<String,List<String>> checkFolder(List<File> files) {
         Hash hash = new Hash();
         ArrayList<String> list = new ArrayList<>();
