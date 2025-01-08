@@ -1,11 +1,18 @@
 package org.kaguya;
 
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Base64;
+import java.util.BitSet;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class SimilarityChecker {
     private static final int HASH_BITS = 64; // 使用64位哈希
@@ -50,21 +57,7 @@ public class SimilarityChecker {
                 double similarity = calculateSimilarity(file1.bits, file2.bits);
                 if (similarity >= similarityThreshold) {  // 使用设定的阈值
                     String key = file1.bits.toString();
-                    similarGroups.computeIfAbsent(key, k -> new SimilarityResult.SimilarityGroup());
-                    
-                    SimilarityResult.SimilarityGroup group = similarGroups.get(key);
-                    // 确保文件只添加一次
-                    boolean hasFile1 = group.getFiles().stream()
-                            .anyMatch(f -> f.getFileName().equals(file1.fileName));
-                    boolean hasFile2 = group.getFiles().stream()
-                            .anyMatch(f -> f.getFileName().equals(file2.fileName));
-                            
-                    if (!hasFile1) {
-                        group.addFile(file1.fileName, 1.0);
-                    }
-                    if (!hasFile2) {
-                        group.addFile(file2.fileName, similarity);
-                    }
+                    addToSimilarityGroup(similarGroups, key, file1.fileName, file2.fileName, similarity);
                 }
             }
         }
@@ -196,5 +189,27 @@ public class SimilarityChecker {
     // 设置是否处理非文本文件
     public void setProcessNonText(boolean process) {
         this.processNonText = process;
+    }
+
+    private void addToSimilarityGroup(Map<String, SimilarityResult.SimilarityGroup> groups, 
+                                    String key, String fileName1, String fileName2, double similarity) {
+        SimilarityResult.SimilarityGroup group = groups.computeIfAbsent(key, 
+            k -> new SimilarityResult.SimilarityGroup());
+        
+        // 检查文件是否已经在组中
+        boolean hasFile1 = group.getFiles().stream()
+            .anyMatch(f -> f.getFileName().equals(fileName1));
+        boolean hasFile2 = group.getFiles().stream()
+            .anyMatch(f -> f.getFileName().equals(fileName2));
+            
+        // 添加文件1（如果不存在）
+        if (!hasFile1) {
+            group.addFile(fileName1, 1.0); // 第一个文件作为基准文件
+        }
+        
+        // 添加文件2（如果不存在）
+        if (!hasFile2) {
+            group.addFile(fileName2, similarity);
+        }
     }
 } 
