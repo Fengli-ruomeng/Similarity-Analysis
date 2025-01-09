@@ -64,7 +64,7 @@ public class Main extends Application {
         
         // 创建算法选择下拉框
         ComboBox<String> algorithmChoice = new ComboBox<>();
-        algorithmChoice.getItems().addAll("MD5对比", "相似度对比");
+        algorithmChoice.getItems().addAll("MD5对比", "SimHash对比");
         algorithmChoice.setValue("MD5对比");
         algorithmChoice.setPrefWidth(120);
 
@@ -84,7 +84,7 @@ public class Main extends Application {
 
         // 根据算法选择显示/隐藏相似度设置
         algorithmChoice.valueProperty().addListener((obs, oldVal, newVal) -> 
-            similaritySettingsBox.setVisible(newVal.equals("相似度对比")));
+            similaritySettingsBox.setVisible(newVal.equals("SimHash对比")));
 
         // 其他按钮
         Button enterButton = new Button("确认");
